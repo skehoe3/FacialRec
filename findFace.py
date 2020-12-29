@@ -23,10 +23,6 @@ HAARCC = cv2.CascadeClassifier(
     'haarcascade_frontalface_alt2.xml')
 
 
-def convertToRGB(image):
-    return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-
 def crop(narray, image):
     """
     Takes a single numpy array of x,y,w,h and selects only that area from the image. 
@@ -37,22 +33,21 @@ def crop(narray, image):
     Returns:
         numpy array: subset of the input image
     """
-    xstart = faces_rects[0][0]
-    xstop = xstart + faces_rects[0][2]
-    ystart = faces_rects[0][1]
-    ystop = ystart + faces_rects[0][3]
+    xstart = narray[0]
+    xstop = xstart + narray[2]
+    ystart = narray[1]
+    ystop = ystart + narray[3]
     return image[xstart:xstop, ystart:ystop]
 
 
-face_locations = {}
 # ; throw this into a function, then throw the function inside of tqdm())
 for i in FILES:
     image = cv2.imread(SOURCE_FOLDER + '/' + i)
-    test_image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    greyscale = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     faces_rects = HAARCC.detectMultiScale(
-        test_image_gray)
+        greyscale)
+    print(faces_rects)
     imname = i.split(".")[0]
-    # ; loopd crops
     for row in range(0, len(faces_rects)):
         print(row)
         cropped = crop(faces_rects[row], image)
